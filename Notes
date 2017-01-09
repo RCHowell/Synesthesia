@@ -1,0 +1,49 @@
+Functions
+----------------
+
+
+ImageFilter
+    Input: Image to Filter (.bmp), Intensity File, Base Style Image
+
+
+
+    Output: Filtered Image (.bmp)
+
+AudioProcessor
+    Input: FPS, Audio File (.wav), Seconds (to Generate Samples For)
+
+    // load file into data[] (take steps from old filter.c file)
+    long lSize 
+    char * data
+    lSize := fileSize(file)
+    data := (char*) malloc(sizeof(char) * lSize)
+    fread(data[], 1, lSize, file)
+
+    // bytes 24-27 contain the sample rate
+    // sample rate is the number of samples per second
+    sample_rate := audioFile[24-27]
+
+    // frames determines the number of bytes the output file
+    // 3 bytes per frame (low, mid, high intesities) 
+    frames := FPS * Seconds
+
+    // sample width is the number of samples per frame
+    // Samples Per Second / Frames Per Second
+    sample_width := sample_rate / FPS
+
+    // starting byte data of a wav file is byte 44
+    byte_index := 44
+    
+    FOR i = 0 ; i < frames; i++
+
+
+        byte_index += sample_width
+    ENDFOR
+
+    Output: Intensity File 
+
+Controller
+    Input: Video File, Audio File (.wav), Style Image
+
+
+    Output: New Video File (.mp4)

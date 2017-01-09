@@ -6,14 +6,12 @@ rm ./output/*
 # take video .mp4 and generate frames (60fps)
 # output frames to frames directory
 echo "Generating Frames..."
-ffmpeg -i ./video_cheetah.mp4 -r 60 ./frames/frame-%06d.bmp
+ffmpeg -i ./videos/jellyfish.mp4 -r 20 ./frames/frame-%06d.bmp
 
 # counter to increment output filenames
 COUNTER=1
-THRESHOLD=450
+THRESHOLD=0
 INCREASE=0
-PINCREASE=1
-PORTION=1
 # for each file in frames directory, run the filter
 echo "Running Filter..."
 for f in ./frames/*; do
@@ -21,14 +19,14 @@ for f in ./frames/*; do
     outFile=$(printf "out-%07d.bmp" $COUNTER)
     # run filter for each frame
     # square filter version ./filter "$f" "./output/$outFile.bmp" $THRESHOLD $PORTION
-    ./filter "$f" "./output/$outFile.bmp" $THRESHOLD
+    ./2.0/filter "$f" "./output/$outFile" 20
     let COUNTER=COUNTER+1
     
     # update threshold
-    if [ $THRESHOLD -lt 400 ]
+    if [ $THRESHOLD -lt 0 ]
     then
 	    let INCREASE=1
-    elif [ $THRESHOLD -gt 1400 ]
+    elif [ $THRESHOLD -gt 250 ]
     then
 	    let INCREASE=0
     else
@@ -37,29 +35,11 @@ for f in ./frames/*; do
 
     if [ $INCREASE -eq 1 ]
     then
-        let THRESHOLD=THRESHOLD+8
+        let THRESHOLD=THRESHOLD+1
     else
-        let THRESHOLD=THRESHOLD-8
+        let THRESHOLD=THRESHOLD-1
     fi
     # done updating threshold
-
-
-    if [ $PORTION -lt 3 ]
-    then
-	    let PINCREASE=1
-    elif [ $PORTION -gt 100 ]
-    then
-	    let PINCREASE=0
-    else
-        let PINCREASE=PINCREASE
-    fi
-
-    if [ $PINCREASE -eq 1 ]
-    then
-        let PORTION=PORTION+2
-    else
-        let PORTION=PORTION-2
-    fi
 done
 echo "Filter done"
 # convert output frames to gif
