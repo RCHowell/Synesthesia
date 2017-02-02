@@ -32,10 +32,10 @@ int main(int argc, char * argv[]) {
 
     u_int max[5] = {0, 0, 0, 0, 0}; // Maximum magnitudes for 
     
-    u_int t0 = 20; // Initial time
-    u_int tF = 24; // Final time
+    u_int t0 = 0; // Initial time
+    u_int tF = 60; // Final time
    
-    u_int recWidth = atof(argv[3]);
+    u_int recWidth = atol(argv[3]);
     u_int frames = FPS * (tF-t0);
     
     for (u_int frame = 0; frame < frames; frame++) {
@@ -51,7 +51,7 @@ int main(int argc, char * argv[]) {
 
         for (u_int i = 0; i < N/2; i++) {
             // Draw bar representing the magnitude of the real values in the transform output
-            u_int magnitude = (0.01 * sqrt(out[i][0] * out[i][0] + out[i][1]*out[i][1]) / 3000) * imgHeight; // Calculate complex vector magnitude
+            u_int magnitude = (0.01 * sqrt(out[i][0] * out[i][0] + out[i][1]*out[i][1]) / 6000) * imgHeight; // Calculate complex vector magnitude
             //cout << magnitude << endl;
             u_int freq = i * wave->getSampleRate() / N;
            
@@ -59,10 +59,12 @@ int main(int argc, char * argv[]) {
             if (freq <= 2600){
                 image->drawRect(i*recWidth, 0, recWidth, magnitude);
                 //cout << magnitude << endl;
+                //image->threshold2(0x00, 0x8C, magnitude);
+                //cout << "Frame Done" << endl;
             }
         }
 
-        sprintf(outputFile, "./Output/out-%03d.bmp", frame);
+        sprintf(outputFile, "./Output/out-%06d.bmp", frame);
         image->saveToFile(outputFile);
         fclose(bmFile);
         delete image;

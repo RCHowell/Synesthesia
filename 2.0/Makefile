@@ -12,6 +12,9 @@ wavefile.o:
 gif:
 	convert -delay 3 -loop 0 ./Output/*.bmp ./result.gif
 
+video:
+	ffmpeg -r 60 -s 640x480 -pattern_type glob -i "./Output/out-*.bmp" -i ${SONG} video.mp4
+
 bitmap.o:
 	$(CC) $(CFLAGS) -c ./Bitmap.cpp
 
