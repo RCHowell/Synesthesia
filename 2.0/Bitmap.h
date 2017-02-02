@@ -9,6 +9,9 @@ x=0,y=0 corresponds to the bottom left corner
 
 **/
 
+#ifndef BITMAP_H_
+#define BITMAP_H_
+
 typedef struct BitmapHeader {
     unsigned char signature[2]; // Characters BM
     unsigned char fileSize[4]; // Size of file
@@ -48,11 +51,12 @@ class Bitmap {
         void saveToFile(const char *); // Save bitmap object to the specified filename
         void threshold2(unsigned char, unsigned char, unsigned char); // Threshold filter with two colors
         void dodge(unsigned char, unsigned char, unsigned char); // Photoshop dodge filter
-        void setPixel(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char);
+        void setPixel(unsigned int, unsigned int, unsigned char, unsigned char, unsigned char); // set pixel at x,y with value R,G,B
         void getPixel(unsigned char *, unsigned int, unsigned int); // Get the pixel at x,y
         unsigned char average(unsigned char * RGB); // Return average color intensity
         unsigned int getWidth();
         unsigned int getHeight();
+        void drawRect(int x, int y, int w, int h);
 
     private:
         unsigned long   getFileSize(FILE *); // Returns file size
@@ -60,3 +64,5 @@ class Bitmap {
         bool            isValid(); // Checks validity of the bitmap file
         unsigned char   max(unsigned int); // Returns max value of unsigned char is int > 255 else returns int
 };
+
+#endif

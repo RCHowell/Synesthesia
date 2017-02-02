@@ -1,54 +1,78 @@
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
+#include <math.h>
 #include "WaveFile.h"
+#include "Bitmap.h"
+
+#include <fftw3.h> // One-Dimensional Fast Fourier Transform Library
+// NOTE: Programs using RFFTW should link with -lrfftw -lfftw -lm
 
 using namespace std;
 
+typedef unsigned int u_int;
+
 int main(int argc, char * argv[]) {
+
     // filename := argv[1];
     // open audio file and read it in binary mode
     FILE * audioFile = fopen(argv[1], "rb");
-    WaveFile * wave = new WaveFile(audioFile);
+    WaveFile * wave = new WaveFile(audioFile); 
     
-     // simulating 3 seconds of footage at 60 FPS
-    int FPS = 60;
-    int FRAMES = 180;
+    u_int FPS = 60;
+    char outputFile[20]; // buffer for output filename
+    u_int N = wave->getSampleRate() / FPS; // (Samples / Second) / (Frames / second) = Samples per Frame
+    
+    double *in;
+    fftw_complex *out;
+    in  = (double*) fftw_malloc(sizeof(double) * N);
+    out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
 
-    unsigned int sampleWidth = wave->getSampleRate() / FPS;
-    printf("Sample Width: %d\n", sampleWidth);
+    fftw_plan plan = fftw_plan_dft_r2c_1d(N, in, out, FFTW_ESTIMATE);
 
-    FILE * audioOutputFile;
-    audioOutputFile = fopen("./Assets/intensity", "wb");
-
-    unsigned long offset = 0;
-    unsigned long total = 0;
-    unsigned char lo;
-    unsigned char hi;
-    uint16_t avg;
-    // Loop over every frame and average the corresponding audio data
-    unsigned char * intensities;
-    intensities = (unsigned char *) malloc(sizeof(unsigned char) * FRAMES * 2);
-    int x = 0; // index to write bytes
-    for (int i = 0; i < FRAMES; i++) {
-        offset = i * sampleWidth;
-        // Reset old total and take the average for the current frame
-        total = 0;
-        for (int j = 0; j < sampleWidth; j++) {
-            total += wave->getSample(j + offset);
+    u_int max[5] = {0, 0, 0, 0, 0}; // Maximum magnitudes for 
+    
+    u_int t0 = 20; // Initial time
+    u_int tF = 24; // Final time
+   
+    u_int recWidth = atof(argv[3]);
+    u_int frames = FPS * (tF-t0);
+    
+    for (u_int frame = 0; frame < frames; frame++) {
+        FILE * bmFile = fopen(argv[2], "rb");
+        Bitmap * image = new Bitmap(bmFile);
+        u_int imgHeight = image->getHeight();
+        unsigned long sampleNumber = wave->getSampleRate() * t0 + N*frame; // Samples / Sec * Sec = Sample at time
+        for (u_int i = 0; i < N; i++) {
+            in[i] = (double) wave->getSample(sampleNumber + i); // Fill input array with proper samples
         }
-        avg = total / sampleWidth;
-        lo = avg & 0xFF;
-        hi = avg >> 8;
-        // Write bytes to intensities file in little endian
-        intensities[x] = hi;
-        intensities[x+1] = lo;
-        x += 2;
+
+        fftw_execute(plan); // Perform a Real to Complex Discrete Fourier Transform in One Dimension
+
+        for (u_int i = 0; i < N/2; i++) {
+            // Draw bar representing the magnitude of the real values in the transform output
+            u_int magnitude = (0.01 * sqrt(out[i][0] * out[i][0] + out[i][1]*out[i][1]) / 3000) * imgHeight; // Calculate complex vector magnitude
+            //cout << magnitude << endl;
+            u_int freq = i * wave->getSampleRate() / N;
+           
+            // Find max of magnitudes in three freq buckets
+            if (freq <= 2600){
+                image->drawRect(i*recWidth, 0, recWidth, magnitude);
+                //cout << magnitude << endl;
+            }
+        }
+
+        sprintf(outputFile, "./Output/out-%03d.bmp", frame);
+        image->saveToFile(outputFile);
+        fclose(bmFile);
+        delete image;
     }
-
-    fwrite(intensities, 1, FRAMES * 2, audioOutputFile);
-
+  
+    fftw_destroy_plan(plan);
+    fftw_free(in);
+    fftw_free(out);
     delete wave;
-    fclose(audioOutputFile);
+    //delete image;
+    
     return 0;
 }

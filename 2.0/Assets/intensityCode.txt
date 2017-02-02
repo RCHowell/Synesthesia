@@ -1,0 +1,21 @@
+// Loop over every frame and average the corresponding audio data
+    unsigned char * intensities;
+    intensities = (unsigned char *) malloc(sizeof(unsigned char) * FRAMES * 2);
+    int x = 0; // index to write bytes
+    for (int i = 0; i < FRAMES; i++) {
+        offset = i * sampleWidth;
+        // Reset old total and take the average for the current frame
+        total = 0;
+        for (int j = 0; j < sampleWidth; j++) {
+            total += wave->getSample(j + offset);
+        }
+        avg = total / sampleWidth;
+        lo = avg & 0xFF;
+        hi = avg >> 8;
+        // Write bytes to intensities file in little endian
+        intensities[x] = hi;
+        intensities[x+1] = lo;
+        x += 2;
+    }
+
+    fwrite(intensities, 1, FRAMES * 2, audioOutputFile);

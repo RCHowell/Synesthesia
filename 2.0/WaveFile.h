@@ -7,6 +7,9 @@ More info here: http://soundfile.sapp.org/doc/WaveFormat/
 
 **/
 
+#ifndef WAVEFILE_H_
+#define WAVEFILE_H_
+
 typedef struct WaveHeader {
     unsigned char chunkID[4];      // big endian 
     unsigned char chunkSize[4];    // little endian
@@ -47,3 +50,5 @@ class WaveFile {
         unsigned long getFileSize(FILE *); // Returns file size
         unsigned int getLittleEndian4(unsigned char *); // Evaluates 4 bytes in little endian
 };
+
+#endif

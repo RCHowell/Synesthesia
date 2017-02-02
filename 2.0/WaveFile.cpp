@@ -19,21 +19,21 @@ WaveFile::WaveFile() : headerSize(44) {
 
 // Create wave file from pointer
 WaveFile::WaveFile(FILE * file) : headerSize(44){
-    printf("...Creating WaveFile...\n");
+    //printf("...Creating WaveFile...\n");
     
     // Read the header into the WaveHeader struct
     hdr = (WaveHeader *) malloc(headerSize);
     fread(hdr, 1, headerSize, file);
-    printf("%c%c%c%c\n", hdr->chunkID[0], hdr->chunkID[1], hdr->chunkID[2], hdr->chunkID[3]);
+    //printf("%c%c%c%c\n", hdr->chunkID[0], hdr->chunkID[1], hdr->chunkID[2], hdr->chunkID[3]);
 
     // Assign header data to member variables
     sampleRate = getLittleEndian4(hdr->sampleRate);
-    printf("Sample Rate: %luhz\n", sampleRate);
+    //printf("Sample Rate: %luhz\n", sampleRate);
     byteRate = getLittleEndian4(hdr->byteRate);
-    printf("Byte Rate: %lu\n", byteRate);
+    //printf("Byte Rate: %lu\n", byteRate);
     bitsPerSample = hdr->bitsPerSample[0] + (hdr->bitsPerSample[1]<<8);
     bytesPerSample = bitsPerSample / 8;
-    printf("Bits Per Sample: %u\n", bitsPerSample);
+    //printf("Bits Per Sample: %u\n", bitsPerSample);
 
     fileSize = getFileSize(file); // call helper to find the size of file
 
@@ -45,9 +45,9 @@ WaveFile::WaveFile(FILE * file) : headerSize(44){
     size_t bytesRead; 
     bytesRead = fread(data, 1, fileSize, file); // Read sound data and store the number of bytes read
 
-    printf("Read %zu bytes\t", bytesRead + headerSize);
+    //printf("Read %zu bytes\t", bytesRead + headerSize);
     fclose(file);
-    printf("Done\n");
+    //printf("Done\n");
 }
 
 // Destructor

@@ -117,6 +117,7 @@ Bitmap::getPixel(unsigned char * RGB, unsigned int x, unsigned int y) {
 void
 Bitmap::setPixel(unsigned int x, unsigned int y, unsigned char R, unsigned char G, unsigned char B) {
     // Calculate pixel position in the flat data array
+    if (x >= width || y >= height) return;
     unsigned long i = (x + y * width) * 3;
     data[i] = B;
     data[i+1] = G;
@@ -168,4 +169,12 @@ Bitmap::max(unsigned int x) {
 unsigned int Bitmap::getWidth() { return width; };
 
 unsigned int Bitmap::getHeight() { return height; };
+
+void Bitmap::drawRect(int x, int y, int w, int h) {
+    for (u_int i = 0; i < w; i++) {
+        for (u_int j = 0; j < h; j++) {
+            setPixel(x+i, y+j, 0, 0, 0);
+        }
+    }
+}
 
