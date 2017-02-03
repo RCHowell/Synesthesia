@@ -1,5 +1,6 @@
 # Synethesia
 The process:
+
 1. Use ffmpeg to split videos to frames (bitmaps).
 
 2. Loop through frames.
