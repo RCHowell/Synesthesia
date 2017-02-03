@@ -5,10 +5,10 @@ Project with end goal of generating music videos
 
 
 Examples:
-![Example](successful/jellyfish.gif)
-![Example](successful/dark2.gif)
-![Example](successful/waveWarm.gif)
-![Example](successful/funkyIguana.gif)
-![Example](successful/moving.gif)
+![Example](Successful/jellyfish.gif)
+![Example](Successful/dark2.gif)
+![Example](Successful/waveWarm.gif)
+![Example](Successful/funkyIguana.gif)
+![Example](Successful/moving.gif)
 
 R. Conner Howell 2016
