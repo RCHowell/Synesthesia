@@ -1,4 +1,4 @@
-# Synethesia
+# Synesthesia
 The process:
 
 1. Use ffmpeg to split videos to frames (bitmaps).
